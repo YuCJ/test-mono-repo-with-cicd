@@ -57,7 +57,7 @@ commands:
           name: "Publish packages to NPM registry if needed"
           command: |
             ${NODE_BIN_DIR}/lerna publish from-package \
-            <<# parameters.prerelease >> --pre-dist-tag rc \ <</ parameters.prerelease >>
+            <<# parameters.prerelease >> --pre-dist-tag rc<</ parameters.prerelease >> \
             --yes
   version:
     description: "Bump packages version if needed"
