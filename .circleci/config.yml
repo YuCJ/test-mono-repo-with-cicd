@@ -15,6 +15,7 @@ jobs:
   check-version-commit:
     executor: node-executor
     steps:
+      - checkout
       - run:
           name: "pick out lerna version commit"
           command: |
