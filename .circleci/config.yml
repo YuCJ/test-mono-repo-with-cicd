@@ -6,8 +6,6 @@ executors:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      - GIT_BASE_REVISION: << pipeline.git.base_revision >>
-      - GIT_CURRENT_REVISION: << pipeline.git.revision >>
       - NODE_BIN_DIR: "node_modules/.bin"
       - PRERELEASE_COMMIT_HEAD: "chore(prerelease): bump version"
       - RELEASE_COMMIT_HEAD: "chore(release): bump version"
