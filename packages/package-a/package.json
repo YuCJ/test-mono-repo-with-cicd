@@ -1,0 +1,17 @@
+{
+  "name": "@yucj/test-mono-repo-with-cicd-packages-a",
+  "version": "1.0.0",
+  "description": "A package of testing JavaScript npm packages as monorepo with CI/CD",
+  "main": "lib/index.js",
+  "repository": "https://github.com/YuCJ/test-mono-repo-with-cicd.git",
+  "author": "yucj <nakts0123@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "mkdir lib; cp -fvr \"src/\" lib",
+    "clean": "rm -vr lib || true",
+    "prepublishOnly": "npm run clean; npm run build"
+  },
+  "files": [
+    "lib"
+  ]
+}
