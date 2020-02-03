@@ -12,26 +12,26 @@ executors:
       - RELEASE_COMMIT_HEAD: "chore(release): bump version"
 
 jobs:
-  check-version-commit:
-    executor: node-executor
-    steps:
-      - checkout
-      - run: mkdir -p workspace
-      - run:
-          name: "pick out lerna version commit"
-          command: |
-            PUSHED_COMMITS=$(git log "$GIT_BASE_REVISION".."$GIT_CURRENT_REVISION" --pretty="format:%h  %s")
-            echo "Pushed commits:"
-            echo "$PUSHED_COMMITS"
-            VERSION_COMMITS=$(echo $PUSHED_COMMITS | grep "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
-            VERSION_COMMITS_COUNT=$(echo $PUSHED_COMMITS | grep -c "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
-            echo "$VERSION_COMMIT_HASH" > workspace/version-commit-hash
-      # Persist the specified paths (workspace/version-commit-hash) into the workspace for use in downstream job. 
-      - persist_to_workspace:
-          # Relative path from working_directory. This is a directory on the container which is taken to be the root directory of the workspace.
-          root: workspace
-          paths:
-            - version-commit-hash
+  # check-version-commit:
+  #   executor: node-executor
+  #   steps:
+  #     - checkout
+  #     - run: mkdir -p workspace
+  #     - run:
+  #         name: "pick out lerna version commit"
+  #         command: |
+  #           PUSHED_COMMITS=$(git log "$GIT_BASE_REVISION".."$GIT_CURRENT_REVISION" --pretty="format:%h  %s")
+  #           echo "Pushed commits:"
+  #           echo "$PUSHED_COMMITS"
+  #           VERSION_COMMITS=$(echo $PUSHED_COMMITS | grep "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
+  #           VERSION_COMMITS_COUNT=$(echo $PUSHED_COMMITS | grep -c "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
+  #           echo "$VERSION_COMMIT_HASH" > workspace/version-commit-hash
+  #     # Persist the specified paths (workspace/version-commit-hash) into the workspace for use in downstream job. 
+  #     - persist_to_workspace:
+  #         # Relative path from working_directory. This is a directory on the container which is taken to be the root directory of the workspace.
+  #         root: workspace
+  #         paths:
+  #           - version-commit-hash
 
   prerelease:
     executor: node-executor
@@ -48,30 +48,26 @@ jobs:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
       - run:
-          name: "Bump version and publish packages if needed."
+          name: "Bump version and publish packages if needed"
           command: |
             VERSION_COMMIT_HASH=$(cat workspace/version-commit-hash)
-            if [[ -z "$VERSION_COMMIT_HASH" ]]; then
-              # Authenticate with npm registry
-              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-              # Set git configs
-              git config --global user.email "developer@twreporter.org"
-              git config --global user.name "reporterdev"
-              # Install build dependencies
-              yarn
-              # Bump prerelease version and push to origin (distribution files are built at `prepublishOnly` hook)
-              ${NODE_BIN_DIR}/lerna publish \
-                --pre-dist-tag prerelease \
-                --conventional-commits \
-                --conventional-prerelease \
-                --preid rc \
-                --include-merged-tags \
-                --create-release github \
-                --message "$PRERELEASE_COMMIT_HEAD" \
-                --yes
-            else
-              echo "The version commits exists. Not to bump new version."
-            fi
+            # Authenticate with npm registry
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+            # Set git configs
+            git config --global user.email "nakts0123@gmail.com"
+            git config --global user.name "yucj"
+            # Install build dependencies
+            yarn
+            # Bump prerelease version and push to origin (distribution files are built at `prepublishOnly` hook)
+            # Publish packages
+            ${NODE_BIN_DIR}/lerna publish \
+              --pre-dist-tag prerelease \
+              --conventional-commits \
+              --conventional-prerelease \
+              --preid rc \
+              --include-merged-tags \
+              --message "$PRERELEASE_COMMIT_HEAD" \
+              --yes
       - save_cache:
           paths:
             - node_modules
@@ -95,27 +91,22 @@ jobs:
           name: "Bump version and publish packages if needed."
           command: |
             VERSION_COMMIT_HASH=$(cat workspace/version-commit-hash)
-            if [[ -z "$VERSION_COMMIT_HASH" ]]; then
-              # Authenticate with npm registry
-              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-              # Install build dependencies
-              yarn
-              # Set git configs
-              git config --global user.email "developer@twreporter.org"
-              git config --global user.name "reporterdev"
-              # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
-              ${NODE_BIN_DIR}/lerna publish \
-                --conventional-commits \
-                --conventional-graduate \
-                --include-merged-tags \
-                --create-release github \
-                --message "$RELEASE_COMMIT_HEAD" \
-                --yes
-              # Push the release to origin/master
-              git push origin master
-            else
-              echo "The version commits exists. Not to bump new version."
-            fi
+            # Authenticate with npm registry
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+            # Install build dependencies
+            yarn
+            # Set git configs
+            git config --global user.email "nakts0123@gmail.com"
+            git config --global user.name "yucj"
+            # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
+            ${NODE_BIN_DIR}/lerna publish \
+              --conventional-commits \
+              --conventional-graduate \
+              --include-merged-tags \
+              --message "$RELEASE_COMMIT_HEAD" \
+              --yes
+            # Push the release to origin/master
+            git push origin master
       - save_cache:
           paths:
             - node_modules
@@ -125,16 +116,16 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - check-version-commit
+      # - check-version-commit
       - release:
-          requires:
-            - check-version-commit
+          # requires:
+          #   - check-version-commit
           filters:
             branches:
               only: release
       - prerelease:
-          requires:
-            - check-version-commit
+          # requires:
+          #   - check-version-commit
           filters:
             branches:
               only: master
