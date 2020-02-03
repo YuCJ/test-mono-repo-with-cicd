@@ -48,7 +48,7 @@ jobs:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
       - run:
-          name: "Bump version and publish packages if needed."
+          name: "Bump version and publish packages if needed"
           command: |
             VERSION_COMMIT_HASH=$(cat workspace/version-commit-hash)
             if [[ -z "$VERSION_COMMIT_HASH" ]]; then
