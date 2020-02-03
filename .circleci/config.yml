@@ -23,12 +23,12 @@ commands:
       email:
         type: string
         default: "nakts0123@gmail.com"
-      name:
+      username:
         type: string
         default: "yucj"
     steps:
       - run: git config --global user.email << parameters.email >>
-      - run: git config --global user.name << parameters.name >>
+      - run: git config --global user.name << parameters.username >>
   set-npm-auth:
     description: "Set NPM authentication"
     steps:
