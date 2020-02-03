@@ -123,12 +123,13 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
+      - check-version-commit
       - release:
-        requires:
-          - check-version-commit
-        filters:
-          branches:
-            only: release
+          requires:
+            - check-version-commit
+          filters:
+            branches:
+              only: release
       - prerelease:
           requires:
             - check-version-commit
