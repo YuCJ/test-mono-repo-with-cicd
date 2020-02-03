@@ -67,7 +67,7 @@ jobs:
                 --preid rc \
                 --include-merged-tags \
                 --create-release github \
-                --message "$PRERELEASE_COMMIT_HEAD"
+                --message "$PRERELEASE_COMMIT_HEAD" \
                 --yes
             else
               echo "The version commits exists. Not to bump new version."
