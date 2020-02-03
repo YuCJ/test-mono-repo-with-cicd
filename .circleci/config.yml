@@ -67,6 +67,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
+            - packages/package-a/node_modules
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
 
   release:
@@ -102,6 +103,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
+            - packages/package-a/node_modules
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
 
 workflows:
