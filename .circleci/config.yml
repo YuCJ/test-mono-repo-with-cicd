@@ -78,7 +78,7 @@ jobs:
       - set-npm-auth
       - install-build-deps
       - run:
-          name: "Bump version and publish packages if needed."
+          name: "Bump version and publish packages if needed"
           command: |
             # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
             ${NODE_BIN_DIR}/lerna publish \
