@@ -60,8 +60,8 @@ commands:
           name: "Publish packages to NPM registry if needed"
           command: |
             ${NODE_BIN_DIR}/lerna publish from-package \
-            <<# parameters.prerelease >> --pre-dist-tag rc<</ parameters.prerelease >> \
-            --yes
+              <<# parameters.prerelease >> --pre-dist-tag rc<</ parameters.prerelease >> \
+              --yes
 
   version:
     description: "Bump packages version if needed"
@@ -73,6 +73,7 @@ commands:
       - run:
           name: "Bump packages version if needed"
           command: |
+            echo "HEAD before version: $(git log -1 --pretty=format:%H)"
             # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
             ${NODE_BIN_DIR}/lerna version \
               --conventional-commits \
@@ -85,6 +86,7 @@ commands:
               --yes
             # Push new version commit back to origin/master
             <<^ parameters.prerelease >>git push origin master<</ parameters.prerelease >>
+            echo "HEAD after version: $(git log -1 --pretty=format:%H)"
 
 jobs:
 
