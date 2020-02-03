@@ -16,6 +16,7 @@ jobs:
     executor: node-executor
     steps:
       - checkout
+      - run: mkdir -p workspace
       - run:
           name: "pick out lerna version commit"
           command: |
