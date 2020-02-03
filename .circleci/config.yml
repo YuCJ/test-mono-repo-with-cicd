@@ -21,8 +21,8 @@ jobs:
             PUSHED_COMMITS=$(git log "$GIT_BASE_REVISION".."$GIT_CURRENT_REVISION" --pretty="format:%h  %s")
             echo "Pushed commits:"
             echo "$PUSHED_COMMITS"
-            VERSION_COMMITS=$(echo $PUSHED_COMMITS | grep -F "$VERSION_COMMIT_TITLE" || true)
-            VERSION_COMMITS_COUNT=$(echo $PUSHED_COMMITS | grep -cF "$VERSION_COMMIT_TITLE" || true)
+            VERSION_COMMITS=$(echo $PUSHED_COMMITS | grep "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
+            VERSION_COMMITS_COUNT=$(echo $PUSHED_COMMITS | grep -c "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
             echo $VERSION_COMMIT_HASH > workspace/version-commit-hash
       # Persist the specified paths (workspace/version-commit-hash) into the workspace for use in downstream job. 
       - persist_to_workspace:
