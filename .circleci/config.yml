@@ -47,9 +47,13 @@ commands:
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
   deploy:
     description: "Publish packages to NPM registry if needed"
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
     steps:
       - set-npm-auth
-      - run: lerna publish from-package --yes
+      - run: lerna publish from-package --yes <<# parameters.prerelease >> --pre-dist-tag rc <</ parameters.prerelease >>
       
 jobs:
   prerelease:
@@ -63,7 +67,6 @@ jobs:
           name: "Bump version if needed"
           command: |
             ${NODE_BIN_DIR}/lerna version \
-              --pre-dist-tag prerelease \
               --conventional-commits \
               --conventional-prerelease \
               --preid rc \
