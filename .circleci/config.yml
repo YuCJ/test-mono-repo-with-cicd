@@ -45,7 +45,7 @@ commands:
             - node_modules
             - packages/package-a/node_modules
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
-  deploy:
+  publish:
     description: "Publish packages to NPM registry if needed"
     parameters:
       prerelease:
@@ -53,7 +53,33 @@ commands:
         default: false
     steps:
       - set-npm-auth
-      - run: ${NODE_BIN_DIR}/lerna publish from-package --yes <<# parameters.prerelease >> --pre-dist-tag rc <</ parameters.prerelease >>
+      - run:
+          name: "Publish packages to NPM registry if needed"
+          command: |
+            ${NODE_BIN_DIR}/lerna publish from-package \
+            <<# parameters.prerelease >> --pre-dist-tag rc \ <</ parameters.prerelease >>
+            --yes
+  version:
+    description: "Bump packages version if needed"
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
+    steps:
+      - run:
+          name: "Bump packages version if needed"
+          command: |
+            # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
+            ${NODE_BIN_DIR}/lerna version \
+              --conventional-commits \
+              <<# parameters.prerelease >> --conventional-prerelease \ <</ parameters.prerelease >>
+              <<# parameters.prerelease >> --preid rc \ <</ parameters.prerelease >>
+              --conventional-graduate \
+              --include-merged-tags \
+              <<# parameters.prerelease >> --message "$PRERELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
+              <<^ parameters.prerelease >> --message "$RELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
+              --yes
+
       
 jobs:
   prerelease:
@@ -63,17 +89,10 @@ jobs:
       - add-github-write-key
       - set-git-user
       - install-build-deps
-      - run:
-          name: "Bump version if needed"
-          command: |
-            ${NODE_BIN_DIR}/lerna version \
-              --conventional-commits \
-              --conventional-prerelease \
-              --preid rc \
-              --include-merged-tags \
-              --message "$PRERELEASE_COMMIT_HEAD" \
-              --yes
-      - deploy
+      - version:
+          prerelease: true
+      - publish:
+          prerelease: true
   release:
     executor: node-executor
     steps:
@@ -81,18 +100,9 @@ jobs:
       - add-github-write-key
       - set-git-user
       - install-build-deps
-      - run:
-          name: "Bump version and publish packages if needed"
-          command: |
-            # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
-            ${NODE_BIN_DIR}/lerna version \
-              --conventional-commits \
-              --conventional-graduate \
-              --include-merged-tags \
-              --message "$RELEASE_COMMIT_HEAD" \
-              --yes
+      - version
       - run: git push origin master
-      - deploy
+      - publish
 
 workflows:
   version: 2.1
