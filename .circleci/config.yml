@@ -1,4 +1,5 @@
 version: 2.1
+
 executors:
   node-executor:
     docker:
@@ -88,6 +89,7 @@ commands:
             <<^ parameters.prerelease >>git push origin master<</ parameters.prerelease >>
 
 jobs:
+
   test:
     executor: node-executor
     steps:
@@ -95,6 +97,7 @@ jobs:
       - run:
           name: 'Test'
           command: npm run test
+
   version:
     executor: node-executor
     parameters:
@@ -124,11 +127,11 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_deploy:
+  version_and_publish:
     jobs:
       - test
       - version:
-          name: release_version
+          name: version_release
           prerelease: false
           requires:
             - test
@@ -136,14 +139,15 @@ workflows:
             branches:
               only: release
       - publish:
+          name: publish_release
           prerelease: false
           requires:
-            - release_version
+            - version_release
           filters:
             branches:
               only: release
       - version:
-          name: prerelease_version
+          name: version_prerelease
           prerelease: true
           requires:
             - test
@@ -151,9 +155,10 @@ workflows:
             branches:
               only: master
       - publish:
+          name: publish_prerelease
           prerelease: true
           requires:
-            - prerelease_version
+            - version_prerelease
           filters:
             branches:
               only: master
