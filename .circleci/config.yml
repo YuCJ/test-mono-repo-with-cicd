@@ -41,9 +41,9 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "7e:7e:9e:89:5f:8d:04:99:a1:44:98:e4:55:ac:58:cf"
-      - attach_workspace:
-          # Relative path from working_directory
-          at: workspace
+      # - attach_workspace:
+      #     # Relative path from working_directory
+      #     at: workspace
       - restore_cache:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
@@ -81,9 +81,9 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "47:59:56:60:06:a3:38:a0:35:b8:a2:46:5f:47:b3:e5"
-      - attach_workspace:
-          # Relative path from working_directory
-          at: workspace
+      # - attach_workspace:
+      #     # Relative path from working_directory
+      #     at: workspace
       - restore_cache:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
