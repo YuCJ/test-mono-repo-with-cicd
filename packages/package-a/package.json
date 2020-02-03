@@ -1,6 +1,6 @@
 {
   "name": "@yucj/test-mono-repo-with-cicd-packages-a",
-  "version": "1.0.0",
+  "version": "1.1.0-rc.3",
   "description": "A package of testing JavaScript npm packages as monorepo with CI/CD",
   "main": "lib/index.js",
   "repository": "https://github.com/YuCJ/test-mono-repo-with-cicd.git",
@@ -13,5 +13,8 @@
   },
   "files": [
     "lib"
-  ]
+  ],
+  "dependencies": {
+    "react": "^16.12.0"
+  }
 }
