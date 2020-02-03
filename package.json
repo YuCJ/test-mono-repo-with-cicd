@@ -7,6 +7,9 @@
   "author": "yucj <nakts0123@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "echo \"run test\""
+  },
   "workspaces": [
     "packages/*"
   ],
