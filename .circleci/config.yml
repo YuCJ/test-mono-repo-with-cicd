@@ -72,12 +72,12 @@ commands:
             # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
             ${NODE_BIN_DIR}/lerna version \
               --conventional-commits \
-              <<# parameters.prerelease >> --conventional-prerelease \ <</ parameters.prerelease >>
-              <<# parameters.prerelease >> --preid rc \ <</ parameters.prerelease >>
+              <<# parameters.prerelease >>--conventional-prerelease \<</ parameters.prerelease >>
+              <<# parameters.prerelease >>--preid rc \<</ parameters.prerelease >>
               --conventional-graduate \
               --include-merged-tags \
-              <<# parameters.prerelease >> --message "$PRERELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
-              <<^ parameters.prerelease >> --message "$RELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
+              <<# parameters.prerelease >>--message "$PRERELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
+              <<^ parameters.prerelease >>--message "$RELEASE_COMMIT_HEAD" \ <</ parameters.prerelease >>
               --yes
 
 jobs:
