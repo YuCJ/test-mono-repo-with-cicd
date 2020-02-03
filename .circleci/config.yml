@@ -45,6 +45,11 @@ commands:
             - node_modules
             - packages/package-a/node_modules
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
+  deploy:
+    description: "Publish packages to NPM registry if needed"
+    steps:
+      - set-npm-auth
+      - run: lerna publish from-package --yes
       
 jobs:
   prerelease:
@@ -53,14 +58,11 @@ jobs:
       - checkout
       - add-github-write-key
       - set-git-user
-      - set-npm-auth
       - install-build-deps
       - run:
-          name: "Bump version and publish packages if needed"
+          name: "Bump version if needed"
           command: |
-            # Bump prerelease version and push to origin (distribution files are built at `prepublishOnly` hook)
-            # Publish packages
-            ${NODE_BIN_DIR}/lerna publish \
+            ${NODE_BIN_DIR}/lerna version \
               --pre-dist-tag prerelease \
               --conventional-commits \
               --conventional-prerelease \
@@ -68,42 +70,36 @@ jobs:
               --include-merged-tags \
               --message "$PRERELEASE_COMMIT_HEAD" \
               --yes
-
+      - deploy
   release:
     executor: node-executor
     steps:
       - checkout
       - add-github-write-key
       - set-git-user
-      - set-npm-auth
       - install-build-deps
       - run:
           name: "Bump version and publish packages if needed"
           command: |
             # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
-            ${NODE_BIN_DIR}/lerna publish \
+            ${NODE_BIN_DIR}/lerna version \
               --conventional-commits \
               --conventional-graduate \
               --include-merged-tags \
               --message "$RELEASE_COMMIT_HEAD" \
               --yes
-            # Push the release to origin/master
-            git push origin master
+      - run: git push origin master
+      - deploy
 
 workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      # - check-version-commit
       - release:
-          # requires:
-          #   - check-version-commit
           filters:
             branches:
               only: release
       - prerelease:
-          # requires:
-          #   - check-version-commit
           filters:
             branches:
               only: master
