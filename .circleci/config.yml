@@ -50,7 +50,6 @@ jobs:
       - run:
           name: "Bump version and publish packages if needed"
           command: |
-            VERSION_COMMIT_HASH=$(cat workspace/version-commit-hash)
             # Authenticate with npm registry
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
             # Set git configs
@@ -90,7 +89,6 @@ jobs:
       - run:
           name: "Bump version and publish packages if needed."
           command: |
-            VERSION_COMMIT_HASH=$(cat workspace/version-commit-hash)
             # Authenticate with npm registry
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
             # Install build dependencies
