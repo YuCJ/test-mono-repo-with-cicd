@@ -79,6 +79,8 @@ commands:
               <<# parameters.prerelease >>--message "$PRERELEASE_COMMIT_HEAD"<</ parameters.prerelease >> \
               <<^ parameters.prerelease >>--message "$RELEASE_COMMIT_HEAD"<</ parameters.prerelease >> \
               --yes
+            # Push new version commit back to origin/master
+            <<^ parameters.prerelease >>git push origin master<</ parameters.prerelease >>
 
 jobs:
   test:
@@ -88,42 +90,66 @@ jobs:
       - run:
           name: 'Test'
           command: npm run test
-  prerelease:
+  version:
     executor: node-executor
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
     steps:
       - checkout
+      - install-build-deps
       - add-github-write-key
       - set-git-user
-      - install-build-deps
       - version:
-          prerelease: true
-      - publish:
-          prerelease: true
-  release:
+          prerelease: << parameters.prerelease >>
+
+  publish:
     executor: node-executor
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
     steps:
       - checkout
-      - add-github-write-key
-      - set-git-user
       - install-build-deps
-      - version
-      - run: git push origin master
-      - publish
+      - set-npm-auth
+      - publish:
+          prerelease: << parameters.prerelease >>
+
 
 workflows:
   version: 2.1
   build_and_deploy:
     jobs:
       - test
-      - release:
+      - version:
+          name: release-version
+          prerelease: false
           requires:
             - test
           filters:
             branches:
               only: release
-      - prerelease:
+      - publish:
+          prerelease: false
+          requires:
+            - release-version
+          filters:
+            branches:
+              only: release
+      - version:
+          name: prerelease-version
+          prerelease: true
           requires:
             - test
+          filters:
+            branches:
+              only: master
+      - publish:
+          prerelease: true
+          requires:
+            - prerelease-version
           filters:
             branches:
               only: master
