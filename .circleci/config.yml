@@ -23,7 +23,7 @@ jobs:
             echo "$PUSHED_COMMITS"
             VERSION_COMMITS=$(echo $PUSHED_COMMITS | grep "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
             VERSION_COMMITS_COUNT=$(echo $PUSHED_COMMITS | grep -c "\^$RELEASE_COMMIT_HEAD\|\^PRERELEASE_COMMIT_HEAD" || true)
-            echo $VERSION_COMMIT_HASH > workspace/version-commit-hash
+            echo "$VERSION_COMMIT_HASH" > workspace/version-commit-hash
       # Persist the specified paths (workspace/version-commit-hash) into the workspace for use in downstream job. 
       - persist_to_workspace:
           # Relative path from working_directory. This is a directory on the container which is taken to be the root directory of the workspace.
