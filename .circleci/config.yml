@@ -53,7 +53,7 @@ commands:
         default: false
     steps:
       - set-npm-auth
-      - run: lerna publish from-package --yes <<# parameters.prerelease >> --pre-dist-tag rc <</ parameters.prerelease >>
+      - run: ${NODE_BIN_DIR}/lerna publish from-package --yes <<# parameters.prerelease >> --pre-dist-tag rc <</ parameters.prerelease >>
       
 jobs:
   prerelease:
