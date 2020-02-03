@@ -10,14 +10,13 @@ executors:
       - NODE_BIN_DIR: "node_modules/.bin"
       - PRERELEASE_COMMIT_HEAD: "chore(prerelease): bump version"
       - RELEASE_COMMIT_HEAD: "chore(release): bump version"
-
 commands:
   add-github-write-key:
     description: "Add GitHub read/write ssh key"
     steps:
       - add_ssh_keys:
-        fingerprints:
-          - "7e:7e:9e:89:5f:8d:04:99:a1:44:98:e4:55:ac:58:cf"
+          fingerprints:
+            - "7e:7e:9e:89:5f:8d:04:99:a1:44:98:e4:55:ac:58:cf"
   set-git-user:
     description: "Set git user in config"
     parameters:
@@ -38,14 +37,14 @@ commands:
     description: "Install build dependencies"
     steps:
       - restore_cache:
-        keys:
-          - v1-dependencies-build-{{ checksum "yarn.lock" }}
+          keys:
+            - v1-dependencies-build-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:
-        paths:
-          - node_modules
-          - packages/package-a/node_modules
-        key: v1-dependencies-build-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - packages/package-a/node_modules
+          key: v1-dependencies-build-{{ checksum "yarn.lock" }}
       
 jobs:
   prerelease:
