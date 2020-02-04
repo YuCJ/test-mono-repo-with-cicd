@@ -42,7 +42,7 @@ commands:
       - restore_cache:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
-      - run: yarn --frozen-lockfile
+      - run: yarn install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
@@ -129,7 +129,12 @@ workflows:
   version: 2.1
   version_and_publish:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              only:
+                - release
+                - master
       - version:
           name: version_release
           prerelease: false
@@ -142,7 +147,7 @@ workflows:
           name: publish_release
           prerelease: false
           requires:
-            - version_release
+            - test
           filters:
             branches:
               only: release
@@ -158,7 +163,7 @@ workflows:
           name: publish_prerelease
           prerelease: true
           requires:
-            - version_prerelease
+            - test
           filters:
             branches:
               only: master
