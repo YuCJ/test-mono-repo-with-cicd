@@ -1,15 +1,15 @@
 version: 2.1
+
 executors:
   node-executor:
     docker:
       - image: circleci/node:10.15
     working_directory: ~/repo
     environment:
-      - GIT_BASE_REVISION: << pipeline.git.base_revision >>
-      - GIT_CURRENT_REVISION: << pipeline.git.revision >>
       - NODE_BIN_DIR: "node_modules/.bin"
       - PRERELEASE_COMMIT_HEAD: "chore(prerelease): bump version"
       - RELEASE_COMMIT_HEAD: "chore(release): bump version"
+
 commands:
   add-github-write-key:
     description: "Add GitHub read/write ssh key"
@@ -17,6 +17,7 @@ commands:
       - add_ssh_keys:
           fingerprints:
             - "7e:7e:9e:89:5f:8d:04:99:a1:44:98:e4:55:ac:58:cf"
+
   set-git-user:
     description: "Set git user in config"
     parameters:
@@ -29,81 +30,150 @@ commands:
     steps:
       - run: git config --global user.email << parameters.email >>
       - run: git config --global user.name << parameters.username >>
+
   set-npm-auth:
     description: "Set NPM authentication"
     steps:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+
   install-build-deps:
     description: "Install build dependencies"
     steps:
       - restore_cache:
           keys:
             - v1-dependencies-build-{{ checksum "yarn.lock" }}
-      - run: yarn
+      - run: yarn install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
             - packages/package-a/node_modules
           key: v1-dependencies-build-{{ checksum "yarn.lock" }}
-      
-jobs:
-  prerelease:
-    executor: node-executor
+
+  publish:
+    description: "Publish packages to NPM registry if needed"
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
     steps:
-      - checkout
-      - add-github-write-key
-      - set-git-user
-      - set-npm-auth
-      - install-build-deps
       - run:
-          name: "Bump version and publish packages if needed"
+          name: "Publish packages to NPM registry if needed"
           command: |
-            # Bump prerelease version and push to origin (distribution files are built at `prepublishOnly` hook)
-            # Publish packages
-            ${NODE_BIN_DIR}/lerna publish \
-              --pre-dist-tag prerelease \
-              --conventional-commits \
-              --conventional-prerelease \
-              --preid rc \
-              --include-merged-tags \
-              --message "$PRERELEASE_COMMIT_HEAD" \
+            ${NODE_BIN_DIR}/lerna publish from-package \
+              <<# parameters.prerelease >> --pre-dist-tag rc<</ parameters.prerelease >> \
               --yes
 
-  release:
+  version:
+    description: "Bump packages version if needed"
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
+    steps:
+      - run:
+          name: "Bump packages version if needed"
+          command: |
+            echo "HEAD before version: $(git log -1 --pretty=format:%H)"
+            # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
+            ${NODE_BIN_DIR}/lerna version \
+              --conventional-commits \
+              <<# parameters.prerelease >>--preid rc<</ parameters.prerelease >> \
+              <<# parameters.prerelease >>--conventional-prerelease<</ parameters.prerelease >> \
+              <<^ parameters.prerelease >>--conventional-graduate<</ parameters.prerelease >> \
+              --include-merged-tags \
+              <<# parameters.prerelease >>--message "$PRERELEASE_COMMIT_HEAD"<</ parameters.prerelease >> \
+              <<^ parameters.prerelease >>--message "$RELEASE_COMMIT_HEAD"<</ parameters.prerelease >> \
+              --yes
+            # Push new version commit back to origin/master
+            <<^ parameters.prerelease >>git push origin master<</ parameters.prerelease >>
+            echo "HEAD after version: $(git log -1 --pretty=format:%H)"
+
+jobs:
+
+  overall-test:
     executor: node-executor
     steps:
       - checkout
-      - add-github-write-key
-      - set-git-user
-      - set-npm-auth
       - install-build-deps
       - run:
-          name: "Bump version and publish packages if needed"
-          command: |
-            # Bump release version and push to origin (distribution files are built at `prepublishOnly` hook)
-            ${NODE_BIN_DIR}/lerna publish \
-              --conventional-commits \
-              --conventional-graduate \
-              --include-merged-tags \
-              --message "$RELEASE_COMMIT_HEAD" \
-              --yes
-            # Push the release to origin/master
-            git push origin master
+          name: 'Run overall tests'
+          command: npm run test
+  
+  changed-packages-tests:
+    executor: node-executor
+    steps:
+      - checkout
+      - install-build-deps
+      - run:
+          name: 'Run package tests if changed'
+          command: ${NODE_BIN_DIR}/lerna run test --since
+
+  version:
+    executor: node-executor
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - install-build-deps
+      - add-github-write-key
+      - set-git-user
+      - version:
+          prerelease: << parameters.prerelease >>
+
+  publish:
+    executor: node-executor
+    parameters:
+      prerelease:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - install-build-deps
+      - set-npm-auth
+      - publish:
+          prerelease: << parameters.prerelease >>
 
 workflows:
   version: 2.1
-  build_and_deploy:
+  version_and_publish:
     jobs:
-      # - check-version-commit
-      - release:
-          # requires:
-          #   - check-version-commit
+      - overall-test
+      - changed-packages-tests
+      - version:
+          name: version_release
+          prerelease: false
+          requires:
+            - overall-test
+            - changed-packages-tests
           filters:
             branches:
               only: release
-      - prerelease:
-          # requires:
-          #   - check-version-commit
+      - publish:
+          name: publish_release
+          prerelease: false
+          requires:
+            - overall-test
+            - changed-packages-tests
+          filters:
+            branches:
+              only: release
+      - version:
+          name: version_prerelease
+          prerelease: true
+          requires:
+            - overall-test
+            - changed-packages-tests
+          filters:
+            branches:
+              only: master
+      - publish:
+          name: publish_prerelease
+          prerelease: true
+          requires:
+            - overall-test
+            - changed-packages-tests
           filters:
             branches:
               only: master

@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-rc.1](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.2.0-rc.0...@yucj/test-mono-repo-with-cicd-packages-a@1.2.0-rc.1) (2020-02-04)
+
+
+### Features
+
+* add new f ([feaa16a](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/feaa16a017e68547c7dfe63dea5cda24781e3219))
+
+
+
+
+
+# [1.2.0-rc.0](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.1...@yucj/test-mono-repo-with-cicd-packages-a@1.2.0-rc.0) (2020-02-04)
+
+
+### Features
+
+* add new feat ([09a9df0](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/09a9df072eb6e05364dcaecab45885fe7629d5ae))
+* add new feat ([d03a5d2](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/d03a5d21650b8146a33a8dfe5d949cbe644535fc))
+* add new feat2 ([78f22b6](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/78f22b6644bed415890dcd2b6f04f61965f4ddef))
+
+
+
+
+
+## [1.1.1-rc.1](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.0...@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.1) (2020-02-04)
+
+
+### Bug Fixes
+
+* **package-a:** new fix4 ([0aa1c1b](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/0aa1c1bdb917b5aa96ba8ee243586e28dd8a2261))
+
+
+
+
+
+## [1.1.1-rc.0](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.0...@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.0) (2020-02-03)
+
+
+### Bug Fixes
+
+* **package-a:** new fix ([f6b79e3](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/f6b79e3cf6c554b16c66c53a6d918e5811c88bb1))
+* **package-a:** new fix3 ([8f9e99a](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/8f9e99a5016c4df1620c09c7513ee8a6c16c6400))
+
+
+
+
+
 # [1.1.0](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.0-rc.3...@yucj/test-mono-repo-with-cicd-packages-a@1.1.0) (2020-02-03)
 
 **Note:** Version bump only for package @yucj/test-mono-repo-with-cicd-packages-a
