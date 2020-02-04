@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1-rc.1](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.0...@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.1) (2020-02-04)
+
+
+### Bug Fixes
+
+* **package-a:** new fix4 ([0aa1c1b](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/0aa1c1bdb917b5aa96ba8ee243586e28dd8a2261))
+
+
+
+
+
 ## [1.1.1-rc.0](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.1.0...@yucj/test-mono-repo-with-cicd-packages-a@1.1.1-rc.0) (2020-02-03)
 
 
