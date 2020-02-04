@@ -9,7 +9,8 @@
   "scripts": {
     "build": "mkdir lib; cp -fvr \"src/\" lib",
     "clean": "rm -vr lib || true",
-    "prepublishOnly": "npm run clean; npm run build"
+    "prepublishOnly": "npm run clean; npm run build",
+    "test": "echo \"run package-a test\""
   },
   "files": [
     "lib"
