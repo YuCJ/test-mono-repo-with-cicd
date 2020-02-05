@@ -90,14 +90,19 @@ commands:
 
 jobs:
 
-  overall-test:
+  test:
     executor: node-executor
     steps:
       - checkout
       - install-build-deps
       - run:
           name: 'Run overall tests'
-          command: npm run test
+          command: |
+            echo "run overall tests"
+      - run:
+          name: 'Run tests of changed packages'
+          command: |
+            NODE_ENV=test ${NODE_BIN_DIR}/lerna run test --since --stream --include-merged-tags
   
   changed-packages-tests:
     executor: node-executor
@@ -139,14 +144,12 @@ workflows:
   version: 2.1
   version_and_publish:
     jobs:
-      - overall-test
-      - changed-packages-tests
+      - test
       - version:
           name: version_release
           prerelease: false
           requires:
-            - overall-test
-            - changed-packages-tests
+            - test
           filters:
             branches:
               only: release
@@ -154,8 +157,7 @@ workflows:
           name: publish_release
           prerelease: false
           requires:
-            - overall-test
-            - changed-packages-tests
+            - test
           filters:
             branches:
               only: release
@@ -163,8 +165,7 @@ workflows:
           name: version_prerelease
           prerelease: true
           requires:
-            - overall-test
-            - changed-packages-tests
+            - test
           filters:
             branches:
               only: master
@@ -172,8 +173,7 @@ workflows:
           name: publish_prerelease
           prerelease: true
           requires:
-            - overall-test
-            - changed-packages-tests
+            - test
           filters:
             branches:
               only: master
