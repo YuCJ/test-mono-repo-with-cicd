@@ -141,15 +141,11 @@ workflows:
   version: 2.1
   version_and_publish:
     jobs:
-      - install_deps
-      - test:
-          requires:
-            - install_deps
+      - test
       - version:
           name: version_release
           prerelease: false
           requires:
-            - install_deps
             - test
           filters:
             branches:
@@ -158,7 +154,6 @@ workflows:
           name: publish_release
           prerelease: false
           requires:
-            - install_deps
             - test
           filters:
             branches:
@@ -167,7 +162,6 @@ workflows:
           name: version_prerelease
           prerelease: true
           requires:
-            - install_deps
             - test
           filters:
             branches:
@@ -176,7 +170,6 @@ workflows:
           name: publish_prerelease
           prerelease: true
           requires:
-            - install_deps
             - test
           filters:
             branches:
