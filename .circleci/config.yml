@@ -116,10 +116,10 @@ jobs:
         type: boolean
         default: false
     steps:
-      - add-github-write-key
-      - set-git-user
       - attach_workspace:
           at: .
+      - add-github-write-key
+      - set-git-user
       - version:
           prerelease: << parameters.prerelease >>
 
@@ -130,9 +130,9 @@ jobs:
         type: boolean
         default: false
     steps:
-      - set-npm-auth
       - attach_workspace:
           at: .
+      - set-npm-auth
       - publish:
           prerelease: << parameters.prerelease >>
 
