@@ -36,19 +36,6 @@ commands:
     steps:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
 
-  install-build-deps:
-    description: "Install build dependencies"
-    steps:
-      - restore_cache:
-          keys:
-            - v1-dependencies-build-{{ checksum "yarn.lock" }}
-      - run: yarn install --frozen-lockfile
-      - save_cache:
-          paths:
-            - node_modules
-            - packages/package-a/node_modules
-          key: v1-dependencies-build-{{ checksum "yarn.lock" }}
-
   publish:
     description: "Publish packages to NPM registry if needed"
     parameters:
@@ -90,28 +77,32 @@ commands:
 
 jobs:
 
+  checkout_and_install_deps:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-build-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - node_modules
+            - packages/package-a/node_modules
+          key: v2-dependencies-build-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   test:
     executor: node-executor
     steps:
-      - checkout
-      - install-build-deps
+      - attach_workspace:
+          at: .
       - run:
-          name: 'Run overall tests'
-          command: |
-            echo "run overall tests"
-      - run:
-          name: 'Run tests of changed packages'
-          command: |
-            NODE_ENV=test ${NODE_BIN_DIR}/lerna run test --since --stream --include-merged-tags
-  
-  changed-packages-tests:
-    executor: node-executor
-    steps:
-      - checkout
-      - install-build-deps
-      - run:
-          name: 'Run package tests if changed'
-          command: ${NODE_BIN_DIR}/lerna run test --since
+          name: 'Run tests'
+          command: make test
 
   version:
     executor: node-executor
@@ -120,10 +111,10 @@ jobs:
         type: boolean
         default: false
     steps:
-      - checkout
-      - install-build-deps
       - add-github-write-key
       - set-git-user
+      - attach_workspace:
+          at: .
       - version:
           prerelease: << parameters.prerelease >>
 
@@ -134,9 +125,9 @@ jobs:
         type: boolean
         default: false
     steps:
-      - checkout
-      - install-build-deps
       - set-npm-auth
+      - attach_workspace:
+          at: .
       - publish:
           prerelease: << parameters.prerelease >>
 
@@ -144,11 +135,15 @@ workflows:
   version: 2.1
   version_and_publish:
     jobs:
-      - test
+      - checkout_and_install_deps
+      - test:
+          requires:
+            - checkout_and_install_deps
       - version:
           name: version_release
           prerelease: false
           requires:
+            - checkout_and_install_deps
             - test
           filters:
             branches:
@@ -157,6 +152,7 @@ workflows:
           name: publish_release
           prerelease: false
           requires:
+            - checkout_and_install_deps
             - test
           filters:
             branches:
@@ -165,6 +161,7 @@ workflows:
           name: version_prerelease
           prerelease: true
           requires:
+            - checkout_and_install_deps
             - test
           filters:
             branches:
@@ -173,6 +170,7 @@ workflows:
           name: publish_prerelease
           prerelease: true
           requires:
+            - checkout_and_install_deps
             - test
           filters:
             branches:
