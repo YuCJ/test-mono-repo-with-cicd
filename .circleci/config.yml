@@ -100,7 +100,7 @@ commands:
             sort $RESULT_FILE -o $RESULT_FILE
       - restore_cache:
           keys:
-            - v2-dependencies-build-{{ checksum "yarn.lock" }}
+            - v3-dependencies-build-{{ checksum "yarn.lock" }}
             - v1-dependencies-link-{{ checksum "packages-checksums" }}
       - run: yarn install --frozen-lockfile
       - save_cache:
@@ -136,8 +136,7 @@ jobs:
         default: false
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - install-deps
       - add-github-write-key
       - set-git-user
       - version:
@@ -151,8 +150,7 @@ jobs:
         default: false
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - install-deps
       - set-npm-auth
       - publish:
           prerelease: << parameters.prerelease >>
