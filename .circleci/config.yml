@@ -106,7 +106,7 @@ commands:
       - save_cache:
           paths:
             - node_modules
-          key: v2-dependencies-build-{{ checksum "yarn.lock" }}
+          key: v3-dependencies-build-{{ checksum "yarn.lock" }}
       - save_cache:
           paths:
             - packages/package-a/node_modules
