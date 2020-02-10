@@ -99,11 +99,9 @@ commands:
             # Now sort the file so that it is 
             sort $RESULT_FILE -o $RESULT_FILE
       - restore_cache:
-          key:
-            - v1-dependencies-link-{{ checksum "packages-checksums" }}
+          key: v1-dependencies-link-{{ checksum "packages-checksums" }}
       - restore_cache:
-          key:
-            - v3-dependencies-build-{{ checksum "yarn.lock" }}
+          key: v3-dependencies-build-{{ checksum "yarn.lock" }}
       - run: yarn install --frozen-lockfile
       - save_cache:
           paths:
