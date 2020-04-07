@@ -119,11 +119,30 @@ commands:
 
 jobs:
 
+  build:
+    executor: node-executor
+    steps:
+      - checkout
+      - install-deps
+      - run:
+          name: 'build all packages'
+          command: |
+            make build
+      - persist_to_workspace:
+          - root: /packages
+          - paths:
+            - */lib
+
   test:
     executor: node-executor
     steps:
       - checkout
       - install-deps
+      - attach_workspace:
+          at: /tmp/packages
+      - run:
+          name: 'listing'
+          command: ls /tmp/packages
       - run:
           name: 'Run overall tests'
           command: |
