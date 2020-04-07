@@ -127,7 +127,7 @@ commands:
       - run:
           name: 'copy built content of all packages from workspace'
           command: |
-            rsync -av /tmp/workspace/packages ./packages
+            cp -vr /tmp/workspace/packages ./packages
 
 jobs:
 
