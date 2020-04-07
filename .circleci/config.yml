@@ -131,7 +131,7 @@ jobs:
       - persist_to_workspace:
           - root: ./
           - paths:
-            - packages/*/lib
+              - packages/*/lib
 
   test:
     executor: node-executor
