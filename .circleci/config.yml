@@ -129,10 +129,10 @@ jobs:
           command: |
             make build
       - persist_to_workspace:
-          - root: ./
-          - paths:
-              - packages/*/lib
-
+          root: ./
+          paths:
+            - packages/*/lib
+    
   test:
     executor: node-executor
     steps:
@@ -183,7 +183,10 @@ workflows:
   version: 2.1
   version_and_publish:
     jobs:
-      - test
+      - build
+      - test:
+          requires:
+            - build
       - version:
           name: version_release
           prerelease: false
