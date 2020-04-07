@@ -17,6 +17,7 @@
     "lib"
   ],
   "dependencies": {
-    "react": "^16.12.0"
+    "react": "^16.12.0",
+    "@yucj/test-mono-repo-with-cicd-packages-b": "^0.1.0-rc.1"
   }
 }
