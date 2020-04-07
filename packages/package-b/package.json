@@ -10,7 +10,8 @@
     "build": "npm run clean; mkdir lib; cp -fvr \"src/\" lib",
     "clean": "rm -vr lib || true",
     "prepublishOnly": "npm run build",
-    "test": "echo \"run package-a test\""
+    "test": "echo \"run package-a test\"",
+    "ls": "ls lib"
   },
   "files": [
     "lib"
