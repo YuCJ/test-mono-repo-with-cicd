@@ -150,7 +150,7 @@ jobs:
       - attach-dist-lib
       - run:
           name: 'listing'
-          command: ls /tmp/workspace
+          command: ls -R /tmp/workspace
       - run:
           name: 'Run overall tests'
           command: |
