@@ -122,9 +122,12 @@ commands:
       - attach_workspace:
           at: /tmp/workspace
       - run:
+          name: 'listing'
+          command: ls -R /tmp/workspace
+      - run:
           name: 'copy built content of all packages from workspace'
           command: |
-            cp -r /tmp/workspace/packages/ ./packages
+            rsync -av /tmp/workspace/packages ./packages
 
 jobs:
 
@@ -148,9 +151,6 @@ jobs:
       - checkout
       - install-deps
       - attach-dist-lib
-      - run:
-          name: 'listing'
-          command: ls -R /tmp/workspace
       - run:
           name: 'Run overall tests'
           command: |
