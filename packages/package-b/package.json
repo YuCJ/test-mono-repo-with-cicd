@@ -11,7 +11,7 @@
     "clean": "rm -vr lib || true",
     "prepublishOnly": "npm run build",
     "test": "echo \"run package-a test\"",
-    "ls": "ls lib"
+    "ls": "ls"
   },
   "files": [
     "lib"
