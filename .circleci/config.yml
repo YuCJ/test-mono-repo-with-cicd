@@ -116,6 +116,15 @@ commands:
             - packages/*/node_modules
           key: v6-dependencies-link-{{ checksum "packages-checksums" }}
 
+  attach-dist-lib:
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: 'copy built content of all packages from workspace'
+          command: |
+            cp -r /tmp/workspace/packages/ ./packages
+
 jobs:
 
   build:
@@ -137,8 +146,7 @@ jobs:
     steps:
       - checkout
       - install-deps
-      - attach_workspace:
-          at: /tmp/workspace
+      - attach-dist-lib
       - run:
           name: 'listing'
           command: ls /tmp/workspace
@@ -174,6 +182,7 @@ jobs:
     steps:
       - checkout
       - install-deps
+      - attach-dist-lib
       - set-npm-auth
       - publish:
           prerelease: << parameters.prerelease >>
