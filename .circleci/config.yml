@@ -129,9 +129,9 @@ jobs:
           command: |
             make build
       - persist_to_workspace:
-          - root: /packages
+          - root: ./
           - paths:
-            - */lib
+            - packages/*/lib
 
   test:
     executor: node-executor
@@ -139,10 +139,10 @@ jobs:
       - checkout
       - install-deps
       - attach_workspace:
-          at: /tmp/packages
+          at: /tmp/workspace
       - run:
           name: 'listing'
-          command: ls /tmp/packages
+          command: ls /tmp/workspace
       - run:
           name: 'Run overall tests'
           command: |
