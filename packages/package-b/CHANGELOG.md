@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.1.0-rc.0 (2020-04-07)
+
+
+### Features
+
+* add package-b ([706a4de](https://github.com/YuCJ/test-mono-repo-with-cicd/commit/706a4de2cce471605bcd28099cec9081455c4017))
+
+
+
+
+
 # [1.3.0-rc.0](https://github.com/YuCJ/test-mono-repo-with-cicd/compare/@yucj/test-mono-repo-with-cicd-packages-a@1.2.0...@yucj/test-mono-repo-with-cicd-packages-a@1.3.0-rc.0) (2020-02-07)
 
 
