@@ -17,6 +17,7 @@
     "lib"
   ],
   "dependencies": {
+    "lodash.get": "^4.4.2",
     "react": "^16.12.0"
   }
 }
